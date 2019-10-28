@@ -1,8 +1,9 @@
 import unittest
 import time
 import random
-from OpenSSL import crypto
 from moneymour.crypto_utils import Signature
+
+from Crypto.PublicKey import RSA
 
 test_private_key = """-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAvT3czEWmcTH6ITffOJFvvKdsS6iv1A3+OnhmOeZKbdLD+OWe
@@ -41,8 +42,9 @@ class SignatureFactoryTest(unittest.TestCase):
 
     @staticmethod
     def test_verify():
-        pkey = crypto.PKey()
-        pkey.generate_key(crypto.TYPE_RSA, 4096)
+        rsa_key = RSA.generate(4096)
+        public_key = rsa_key.publickey().exportKey("PEM")
+        private_key = rsa_key.exportKey("PEM")
 
         body = {
             'phoneNumber': '+39' + str(random.randrange(1000000000, 9999999999)),
@@ -57,6 +59,6 @@ class SignatureFactoryTest(unittest.TestCase):
         }
 
         expires_at = time.time()
-        signature = Signature.build(crypto.dump_privatekey(crypto.FILETYPE_PEM, pkey), expires_at, body)
+        signature = Signature.build(private_key, expires_at, body)
 
-        assert Signature.verify(signature, expires_at, body, crypto.dump_publickey(crypto.FILETYPE_PEM, pkey))
+        assert Signature.verify(signature, expires_at, body, public_key)

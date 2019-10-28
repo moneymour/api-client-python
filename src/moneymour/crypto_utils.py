@@ -1,4 +1,3 @@
-from OpenSSL import crypto
 import base64
 import json
 from moneymour import environments
@@ -50,10 +49,15 @@ class Signature:
         :return: A base64 encoded signature string
         """
 
-        key = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key)
         payload = Signature.build_payload(expires_at, body)
 
-        signature = crypto.sign(key, payload, "sha256")
+        # key = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key)
+        # signature = crypto.sign(key, payload, "sha256")
+
+        rsa_key = RSA.importKey(private_key)
+        signer = PKCS1_v1_5.new(rsa_key)
+
+        signature = signer.sign(SHA256.new(payload.encode('utf-8')))
 
         return base64.b64encode(signature)
 
@@ -76,8 +80,8 @@ class Signature:
 
         payload = Signature.build_payload(expires_at, body)
 
-        rsakey = RSA.importKey(public_key)
-        signer = PKCS1_v1_5.new(rsakey)
+        rsa_key = RSA.importKey(public_key)
+        signer = PKCS1_v1_5.new(rsa_key)
         digest = SHA256.new(payload.encode('utf-8'))
 
         return signer.verify(digest, base64.b64decode(signature))
