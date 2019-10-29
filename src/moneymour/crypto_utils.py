@@ -1,5 +1,7 @@
 import base64
 import json
+from datetime import datetime
+from datetime import timedelta
 from moneymour import environments
 
 from Crypto.PublicKey import RSA
@@ -50,9 +52,6 @@ class Signature:
         """
 
         payload = Signature.build_payload(expires_at, body)
-
-        # key = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key)
-        # signature = crypto.sign(key, payload, "sha256")
 
         rsa_key = RSA.importKey(private_key)
         signer = PKCS1_v1_5.new(rsa_key)
@@ -112,4 +111,13 @@ class Signature:
         :return: The payload to be signed in string format
         """
 
-        return str(expires_at) + '|' + json.dumps(body)
+        return str(expires_at) + '|' + json.dumps(body, separators=(',', ':'), ensure_ascii=False)
+
+    @staticmethod
+    def generate_expires_at_header_value():
+        """
+        Generate a 60-second valid expires-at header value.
+
+        :return: string EPOCH timestamp. Now UTC + 60 secondsw
+        """
+        return (datetime.now() + timedelta(seconds=60)).strftime('%s')
