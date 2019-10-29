@@ -1,3 +1,5 @@
+setuptools
+wheel
 nose
 pycrypto
 requests
