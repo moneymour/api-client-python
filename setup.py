@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="moneymour-api-client",
-    version="0.0.1",
+    version="0.0.2",
     author="Antonio Trapani",
     author_email="antonio.trapani@gmail.com",
     description="The library offers easy access to Moneymour APIs",
@@ -19,4 +19,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
+    install_requires=[
+        'requests',
+        'pycrypto',
+    ],
 )
