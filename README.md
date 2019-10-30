@@ -55,7 +55,7 @@ response = client.request(PRIVATE_KEY, payload)
 # Output response
 print(response)
 
-"""
+'''
 {
     "status": "accepted",
     "amount": 1080,
@@ -78,7 +78,7 @@ print(response)
         }
     ]
 }
-"""
+'''
 ```
 
 ## Gotchas
